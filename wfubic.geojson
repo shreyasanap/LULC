@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "wfubic",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 73.01198, 18.954464 ], [ 73.01198, 19.016756 ], [ 73.125236, 19.016756 ], [ 73.125236, 18.954464 ], [ 73.01198, 18.954464 ] ] ] } }
+]
+}

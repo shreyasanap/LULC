@@ -21,7 +21,7 @@ def ee_authenticate(token_name="EARTHENGINE_TOKEN"):
     geemap.ee_initialize(token_name=token_name)
 
 
-
+ee.Initialize(project='lulc-429712')
 
 goes_rois = {
     "Creek Fire, CA (2020-09-05)": {

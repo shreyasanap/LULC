@@ -6,7 +6,7 @@ def app():
     st.title('Split Map of Land Cover Changes')
 
     # Initialize the Earth Engine module
-    ee.Initialize(project='lulc-429712')
+    ee.Initialize()
 
     # Define available years
     years = [str(year) for year in range(2001, 2022, 2)]
@@ -44,8 +44,11 @@ def app():
     # Add the layers to the split map
     m.split_map(left_layer, right_layer)
 
+    # Convert the map to HTML
+    map_html = m.to_html()
+
     # Display the map in Streamlit
-    st.write(m.to_streamlit(height=700))
+    st.components.v1.html(map_html, height=700)
 
     # Define and display the legend
     legend = {

@@ -3,7 +3,7 @@ import leafmap.foliumap as leafmap
 
 st.set_page_config(layout="wide")
 
-st.title("Streamlit for Geospatial Applications")
+st.title("Earth Explorer 🌎")
 
 row1_col1, row1_col2 = st.columns(2)
 with row1_col1:

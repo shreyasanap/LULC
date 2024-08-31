@@ -3,7 +3,7 @@ import geemap.foliumap as geemap
 import ee
 
 def app():
-    st.title('Landsat Data and Tree Cover Changes Visualization')
+    st.title('Global Forest Cover Loss 🌳')
 
     # Initialize the Earth Engine module
     ee.Initialize(project='lulc-429712')

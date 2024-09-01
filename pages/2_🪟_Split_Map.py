@@ -6,7 +6,7 @@ def app():
     st.title('Split Map of Land Cover Changes')
 
     # Initialize the Earth Engine module
-    ee.Initialize()
+    ee.Initialize(project='lulc-429712')
 
     # Define available years
     years = [str(year) for year in range(2001, 2022, 2)]

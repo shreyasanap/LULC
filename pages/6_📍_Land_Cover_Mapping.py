@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 # Initialize Earth Engine
 def initialize_earth_engine():
     try:
-        ee.Initialize(project='ee-shreya20comp')
+        ee.Initialize(project='lulc-429712')
         st.write("Earth Engine initialized successfully.")
     except Exception as e:
         st.error(f"Error initializing Earth Engine: {e}")
@@ -53,8 +53,8 @@ markdown = """
 """
 
 with col2:
-    longitude = st.number_input("Longitude", -180.0, 180.0, -89.3998)
-    latitude = st.number_input("Latitude", -90.0, 90.0, 43.0886)
+    longitude = st.number_input("Longitude", -180.0, 180.0, 73.1146)
+    latitude = st.number_input("Latitude", -90.0, 90.0, 18.9894)
     zoom = st.number_input("Zoom", 0, 20, 11)
 
     Map.setCenter(longitude, latitude, zoom)
@@ -65,7 +65,7 @@ with col2:
     start_date = start.strftime("%Y-%m-%d")
     end_date = end.strftime("%Y-%m-%d")
 
-    region = ee.Geometry.BBox(-179, -89, 179, 89)
+    region = ee.Geometry.BBox(-179, -89, 179, 89) # Covers most of the world in this box.
 
     try:
         dw = geemap.dynamic_world(region, start_date, end_date, return_type="hillshade")

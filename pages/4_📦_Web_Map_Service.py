@@ -79,7 +79,7 @@ def app():
 
         with row1_col1:
             # Center the map on India and adjust zoom level
-            m = leafmap.Map(center=(20.5937, 78.9629), zoom=5)
+            m = leafmap.Map(center=(18.5937, 71.9629), zoom=5)
 
             if layers is not None:
                 for layer in layers:

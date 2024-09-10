@@ -1,8 +1,6 @@
 import streamlit as st
 import ee
 import folium
-import geemap.colormaps as cm
-import geemap.foliumap as geemap
 from streamlit_folium import folium_static
 
 # Authenticate the Google Earth Engine account
@@ -106,17 +104,22 @@ folium.Map.add_ee_layer = add_ee_layer
 # Create a folium map centered on the ROI
 Map = folium.Map(location=[center_lat, center_lon], zoom_start=8)
 
-# Add base map
-basemaps = {
-    'Google Satellite Hybrid': folium.TileLayer(
-        tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-        attr='Google',
-        name='Google Satellite Hybrid',
-        overlay=True,
-        control=True
-    )
-}
-basemaps['Google Satellite Hybrid'].add_to(Map)
+# Add base maps
+folium.TileLayer(
+    tiles='https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}',
+    attr='Google',
+    name='Google Hybrid',
+    overlay=False,
+    control=True
+).add_to(Map)
+
+folium.TileLayer(
+    tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+    attr='Google',
+    name='Google Satellite',
+    overlay=False,
+    control=True
+).add_to(Map)
 
 # Visualization parameters for the classified image
 legend_dict = {
@@ -132,6 +135,9 @@ vis_params = {
 
 # Add the classified image to the map
 Map.add_ee_layer(classified_image, vis_params, 'Land Cover Classification')
+
+# Add Layer Control to the map
+folium.LayerControl().add_to(Map)
 
 # Render the map in Streamlit
 folium_static(Map)

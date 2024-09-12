@@ -20,7 +20,7 @@ box_size = st.sidebar.slider("Box Size (in degrees)", min_value=0.01, max_value=
 
 # Classifier dropdown
 classifier_choice = st.sidebar.selectbox("Choose Classifier", 
-                                         ["Random Forest", "KNN", "Gradient Tree Boost"])
+                                         ["Random Forest", "KNN", "Gradient Tree Boost","SVM", "Decision Tree"])
 
 # Calculate the bounding box coordinates
 half_size = box_size / 2
@@ -72,6 +72,18 @@ def classify_image(classifier_type):
             classProperty=label,
             inputProperties=bands
         )
+    elif classifier_type == "SVM":
+        classifier = ee.Classifier.libsvm().train(
+            features=trainingSample,
+            classProperty=label,
+            inputProperties=bands
+        )
+    elif classifier_type == "Decision Tree":
+        classifier = ee.Classifier.smileCart().train(
+            features=trainingSample,
+            classProperty=label,
+            inputProperties=bands
+        )
     else:  # Gradient Tree Boost
         classifier = ee.Classifier.smileGradientTreeBoost(50).train(
             features=trainingSample,
@@ -89,14 +101,14 @@ classified_image = classify_image(classifier_choice)
 
 # Define a method for displaying Earth Engine Image tiles on a folium map
 def add_ee_layer(self, ee_image_object, vis_params, name):
-    map_id_dict = ee.Image(ee_image_object).getMapId(vis_params)
+    map_id_dict = ee.Image(ee_image_object).getMapId(vis_params) #converts Earth engine object to image if not converted.
     folium.raster_layers.TileLayer(
         tiles=map_id_dict['tile_fetcher'].url_format,
         attr='Map Data &copy; <a href="https://earthengine.google.com/">Google Earth Engine</a>',
         name=name,
-        overlay=True,
-        control=True
-    ).add_to(self)
+        overlay=True, # Means that will overlay that layer over the map
+        control=True # Means that will appear in layers section which can be used to tick to display it or not.
+    ).add_to(self) # Adds the layer to folium map.
 
 # Add the method to the folium Map object
 folium.Map.add_ee_layer = add_ee_layer
@@ -109,16 +121,16 @@ folium.TileLayer(
     tiles='https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}',
     attr='Google',
     name='Google Hybrid',
-    overlay=False,
-    control=True
+    overlay=False, # This is basemap soo this will not overlay
+    control=True # Means this will be included in contraol panel to allow to switch b/w different basemaps
 ).add_to(Map)
 
 folium.TileLayer(
     tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
     attr='Google',
     name='Google Satellite',
-    overlay=False,
-    control=True
+    overlay=False, # This is basemap soo this will not overlay
+    control=True # Means this will be included in contraol panel to allow to switch b/w different basemaps
 ).add_to(Map)
 
 # Visualization parameters for the classified image

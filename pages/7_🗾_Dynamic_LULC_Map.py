@@ -35,7 +35,7 @@ roi = ee.Geometry.Rectangle([ul_lon, lr_lat, lr_lon, ul_lat])
 # Load Landsat 8 Collection 2 data and select relevant bands
 image = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2') \
     .filterBounds(roi) \
-    .filterDate('2021-01-01', '2021-12-31') \
+    .filterDate('2023-01-01', '2023-12-31') \
     .sort('CLOUD_COVER') \
     .first()
 
@@ -67,7 +67,7 @@ def classify_image(classifier_type):
             inputProperties=bands
         )
     elif classifier_type == "KNN":
-        classifier = ee.Classifier.smileKNN(50).train(
+        classifier = ee.Classifier.smileKNN(100).train(
             features=trainingSample,
             classProperty=label,
             inputProperties=bands

@@ -10,11 +10,23 @@ trusted_urls = [
     # Add more trusted URLs here
 ]
 
+# Exclude specific layers
+excluded_layers = [
+    "TERRASCOPE_S2_CHLA_V1", "TERRASCOPE_S2_CHL_V1", "TERRASCOPE_S2_RHOW_V1", 
+    "TERRASCOPE_S2_SPM_V1", "TERRASCOPE_S2_TUR_V1"
+]
+
 @st.cache_data
 def get_layers(url):
     try:
         options = leafmap.get_wms_layers(url)
-        return options
+        # Filter layers to include only those starting with "WORLDCOVER", "TERRASCOPE", or "CGS_S1_COHERENCE"
+        filtered_options = [
+            layer for layer in options 
+            if (layer.startswith("WORLDCOVER") or layer.startswith("TERRASCOPE") or layer == "CGS_S1_COHERENCE")
+            and layer not in excluded_layers
+        ]
+        return filtered_options
     except Exception as e:
         st.error(f"Error retrieving layers: {e}")
         return []
@@ -23,12 +35,13 @@ def is_trusted_url(url):
     return url in trusted_urls
 
 def app():
-    st.title("Web Map Service (WMS) Layer Viewer")
+    st.title("Web Map Service (WMS)")
     st.markdown(
         """
-        This app demonstrates loading Web Map Service (WMS) layers. Enter the URL of the WMS service below to retrieve its layers.
-        For more WMS URLs, visit [National Map Services](https://apps.nationalmap.gov/services).
-        """
+    This app is a demonstration of loading Web Map Service (WMS) layers. Simply enter the URL of the WMS service
+    in the text box below and press Enter to retrieve the layers. Go to https://apps.nationalmap.gov/services to find
+    some WMS URLs if needed.
+    """
     )
 
     row1_col1, row1_col2 = st.columns([3, 1.3])
@@ -46,10 +59,6 @@ def app():
         if url:
             if is_trusted_url(url):
                 options = get_layers(url)
-                
-                # Print the available layers for debugging
-                st.write("Available WMS layers:", options)
-                
                 if not options:
                     st.warning("No layers found or unable to fetch layers from the URL.")
                     options = []
@@ -78,8 +87,8 @@ def app():
                 )
 
         with row1_col1:
-            # Center the map on India and adjust zoom level
-            m = leafmap.Map(center=(18.5937, 71.9629), zoom=5)
+            # Set the map to start zoomed in on India
+            m = leafmap.Map(center=(20.5937, 78.9629), zoom=5)
 
             if layers is not None:
                 for layer in layers:
@@ -96,8 +105,6 @@ def app():
                     m.add_legend(legend_dict=legend_dict)
                 except json.JSONDecodeError:
                     st.error("Invalid legend format. Please enter a valid JSON dictionary.")
-                except Exception as e:
-                    st.error(f"Error adding legend: {e}")
 
             m.to_streamlit(height=height)
 

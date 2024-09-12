@@ -56,9 +56,12 @@ else:
 
             # Add a submit button for processing the image
             if st.button("Submit"):
+                temp_folder = "temp_images"
+                if not os.path.exists(temp_folder):
+                    os.makedirs(temp_folder)
                 try:
                     # Save the uploaded image temporarily
-                    temp_path = "temp_uploaded_image.png"
+                    temp_path = os.path.join(temp_folder, "temp_uploaded_image.png")
                     image = Image.open(io.BytesIO(st.session_state.uploaded_image))
                     image.save(temp_path)
 

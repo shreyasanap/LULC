@@ -217,8 +217,7 @@ def app():
                         index = asset_titles.index(dataset)
                         html = geemap.ee_data_html(st.session_state["ee_assets"][index])
                         st.markdown(html, True)
-            # elif collection == "MODIS Gap filled Land Surface Temperature Daily":
-            #     ee_id = ""
+            
             else:
                 ee_id = ""
 
@@ -318,6 +317,7 @@ def app():
             )
             st.write(cm.plot_colormap(cmap=palette_options, return_fig=True))
             st.session_state["palette"] = json.loads(palette.replace("'", '"'))
+        
         elif collection == "MODIS Ocean Color SMI":
             with st.expander("Show dataset details", False):
                 st.markdown(

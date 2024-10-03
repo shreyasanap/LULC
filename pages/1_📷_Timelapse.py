@@ -19,24 +19,34 @@ warnings.filterwarnings("ignore")
 @st.cache_data
 def ee_authenticate(token_name="EARTHENGINE_TOKEN"):
     geemap.ee_initialize(token_name=token_name)
-
-
+ee.Initialize(project='lulc-429712')
 
 goes_rois = {
-    "India Floods (2021-07-19)": {
+    "India": {
         "region": Polygon(
             [
-                [72.6300, 19.0750],  # Mumbai
-                [72.8800, 19.6750],  # North of Mumbai
-                [73.2300, 18.9750],  # Inland area
-                [72.6300, 18.5750],  # Coastal area
+                [68.1766, 7.9655],  # SW corner of India
+                [68.1766, 35.4940],  # NW corner of India
+                [97.4026, 35.4940],  # NE corner of India
+                [97.4026, 7.9655],  # SE corner of India
             ]
         ),
-        "start_time": "2021-07-19T08:00:00",
-        "end_time": "2021-07-19T18:00:00",
+        "start_time": "2023-01-01T00:00:00",
+        "end_time": "2024-09-13T23:59:59",
+    },
+    "Mumbai": {
+        "region": Polygon(
+            [
+                [72.7758, 18.9067],  # SW corner
+                [72.9965, 18.9067],  # SE corner
+                [72.9965, 19.2715],  # NE corner
+                [72.7758, 19.2715],  # NW corner
+            ]
+        ),
+        "start_time": "2023-01-01T00:00:00",
+        "end_time": "2024-09-13T23:59:59",
     },
 }
-
 landsat_rois = {
     "Delhi": Polygon(
         [
@@ -64,24 +74,61 @@ landsat_rois = {
     ),
 }
 
+
 modis_rois = {
-    "India": Polygon(
+    "World": Polygon(
         [
-            [68.1766, 7.9655],   # SW corner of India
-            [68.1766, 35.4940],  # NW corner of India
-            [97.4026, 35.4940],  # NE corner of India
-            [97.4026, 7.9655],   # SE corner of India
+            [-171.210938, -57.136239],
+            [-171.210938, 79.997168],
+            [177.539063, 79.997168],
+            [177.539063, -57.136239],
+            [-171.210938, -57.136239],
+        ]
+    ),
+    "Africa": Polygon(
+        [
+            [-18.6983, 38.1446],
+            [-18.6983, -36.1630],
+            [52.2293, -36.1630],
+            [52.2293, 38.1446],
+        ]
+    ),
+    "USA": Polygon(
+        [
+            [-127.177734, 23.725012],
+            [-127.177734, 50.792047],
+            [-66.269531, 50.792047],
+            [-66.269531, 23.725012],
+            [-127.177734, 23.725012],
         ]
     ),
 }
-
 ocean_rois = {
-    "Indian Ocean": Polygon(
+    "Gulf of Mexico": Polygon(
         [
-            [56.25, -45.089],    # SW corner
-            [56.25, 30.959],     # NW corner
-            [110.507, 30.959],   # NE corner
-            [110.507, -45.089],  # SE corner
+            [-101.206055, 15.496032],
+            [-101.206055, 32.361403],
+            [-75.673828, 32.361403],
+            [-75.673828, 15.496032],
+            [-101.206055, 15.496032],
+        ]
+    ),
+    "North Atlantic Ocean": Polygon(
+        [
+            [-85.341797, 24.046464],
+            [-85.341797, 45.02695],
+            [-55.810547, 45.02695],
+            [-55.810547, 24.046464],
+            [-85.341797, 24.046464],
+        ]
+    ),
+    "World": Polygon(
+        [
+            [-171.210938, -57.136239],
+            [-171.210938, 79.997168],
+            [177.539063, 79.997168],
+            [177.539063, -57.136239],
+            [-171.210938, -57.136239],
         ]
     ),
 }
@@ -118,7 +165,7 @@ def app():
     st.markdown(
         """
         An interactive web app for creating [Landsat](https://developers.google.com/earth-engine/datasets/catalog/landsat)/[GOES](https://jstnbraaten.medium.com/goes-in-earth-engine-53fbc8783c16) timelapse for any location around the globe.
-        The app was built using [streamlit](https://streamlit.io), [geemap](https://geemap.org), and [Google Earth Engine](https://earthengine.google.com). For more info, check out my streamlit [blog post](https://blog.streamlit.io/creating-satellite-timelapse-with-streamlit-and-earth-engine).
+        The app was built using [streamlit](https://streamlit.io), [geemap](https://geemap.org), and [Google Earth Engine](https://earthengine.google.com).
     """
     )
 
@@ -164,11 +211,11 @@ def app():
                 "Any Earth Engine ImageCollection",
                 "Landsat TM-ETM-OLI Surface Reflectance",
                 "Sentinel-2 MSI Surface Reflectance",
-                "Geostationary Operational Environmental Satellites (GOES)",
+                # "Geostationary Operational Environmental Satellites (GOES)",
                 "MODIS Vegetation Indices (NDVI/EVI) 16-Day Global 1km",
                 "MODIS Gap filled Land Surface Temperature Daily",
                 "MODIS Ocean Color SMI",
-                "USDA National Agriculture Imagery Program (NAIP)",
+                # "USDA National Agriculture Imagery Program (NAIP)",
             ],
             index=1,
         )
@@ -395,8 +442,7 @@ def app():
                     "User-defined": None,
                     "Continents": "continents",
                     "Countries": "countries",
-                    "US States": "us_states",
-                    "China": "china",
+                    "India": "india"
                 }
 
                 overlay = st.selectbox(

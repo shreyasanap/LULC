@@ -20,7 +20,7 @@ box_size = st.sidebar.slider("Box Size (in degrees)", min_value=0.01, max_value=
 
 # Classifier dropdown
 classifier_choice = st.sidebar.selectbox("Choose Classifier", 
-                                         ["Random Forest", "KNN", "Gradient Tree Boost","SVM", "Decision Tree"])
+                                         ["Random Forest", "KNN", "Gradient Tree Boost", "SVM", "Decision Tree"])
 
 # Calculate the bounding box coordinates
 half_size = box_size / 2
@@ -101,14 +101,14 @@ classified_image = classify_image(classifier_choice)
 
 # Define a method for displaying Earth Engine Image tiles on a folium map
 def add_ee_layer(self, ee_image_object, vis_params, name):
-    map_id_dict = ee.Image(ee_image_object).getMapId(vis_params) #converts Earth engine object to image if not converted.
+    map_id_dict = ee.Image(ee_image_object).getMapId(vis_params)  # Converts Earth engine object to image if not converted.
     folium.raster_layers.TileLayer(
         tiles=map_id_dict['tile_fetcher'].url_format,
         attr='Map Data &copy; <a href="https://earthengine.google.com/">Google Earth Engine</a>',
         name=name,
-        overlay=True, # Means that will overlay that layer over the map
-        control=True # Means that will appear in layers section which can be used to tick to display it or not.
-    ).add_to(self) # Adds the layer to folium map.
+        overlay=True,  # Means that will overlay that layer over the map
+        control=True  # Means that will appear in layers section which can be used to tick to display it or not.
+    ).add_to(self)  # Adds the layer to folium map.
 
 # Add the method to the folium Map object
 folium.Map.add_ee_layer = add_ee_layer
@@ -121,16 +121,16 @@ folium.TileLayer(
     tiles='https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}',
     attr='Google',
     name='Google Hybrid',
-    overlay=False, # This is basemap soo this will not overlay
-    control=True # Means this will be included in contraol panel to allow to switch b/w different basemaps
+    overlay=False,  # This is basemap so this will not overlay
+    control=True  # Means this will be included in control panel to allow to switch b/w different basemaps
 ).add_to(Map)
 
 folium.TileLayer(
     tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
     attr='Google',
     name='Google Satellite',
-    overlay=False, # This is basemap soo this will not overlay
-    control=True # Means this will be included in contraol panel to allow to switch b/w different basemaps
+    overlay=False,  # This is basemap so this will not overlay
+    control=True  # Means this will be included in control panel to allow to switch b/w different basemaps
 ).add_to(Map)
 
 # Visualization parameters for the classified image
@@ -148,8 +148,56 @@ vis_params = {
 # Add the classified image to the map
 Map.add_ee_layer(classified_image, vis_params, 'Land Cover Classification')
 
+# Create a legend for the land cover types
+legend_html = '''
+    <div style="position: fixed; 
+                bottom: 50px; left: 50px; width: 120px; 
+                height: auto; z-index: 9999; 
+                font-size:14px; 
+                background-color: white; 
+                border: 2px solid grey; 
+                padding: 10px; 
+                box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);">
+        <b>Legend</b><br>
+'''
+
+for name, color in zip(legend_dict['names'], legend_dict['colors']):
+    legend_html += f'<i style="background: {color}; width: 18px; height: 18px; float: left; margin-right: 8px; border: 1px solid grey;"></i>{name}<br>'
+
+legend_html += '</div>'
+
+# Add the legend to the map
+Map.get_root().html.add_child(folium.Element(legend_html))
+
 # Add Layer Control to the map
 folium.LayerControl().add_to(Map)
 
 # Render the map in Streamlit
 folium_static(Map)
+
+# Add Layer Control to the map
+folium.LayerControl().add_to(Map)
+
+# Display custom legend below the map in Streamlit
+st.markdown("### Legend")
+
+# Corrected HTML structure for inline Streamlit rendering with st.components.v1.html
+legend_html = """
+<div style='display: flex; flex-direction: column; gap: 8px;'>
+"""
+
+# Loop to create legend items dynamically
+for name, color in zip(legend_dict["names"], legend_dict["colors"]):
+    legend_html += f"""
+    <div style='display: flex; align-items: center; margin-bottom: 5px;'>
+        <div style='width: 18px; height: 18px; background-color: {color}; margin-right: 10px; border: 1px solid #000;'></div>
+        <span>{name}</span>
+    </div>
+    """
+
+legend_html += "</div>"
+
+# Render the legend in Streamlit using st.components.v1.html
+st.components.v1.html(legend_html, height=400)
+
+

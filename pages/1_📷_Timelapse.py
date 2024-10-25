@@ -751,10 +751,10 @@ def app():
 
                         if out_gif is not None and os.path.exists(out_gif):
 
-                            empty_text.text(
-                                "Right click the GIF to save it to your computer👇"
-                            )
-                            empty_image.image(out_gif)
+                            # empty_text.text(
+                            #     ""
+                            # )
+                            # empty_image.image(out_gif)
 
                             out_mp4 = out_gif.replace(".gif", ".mp4")
                             if mp4 and os.path.exists(out_mp4):

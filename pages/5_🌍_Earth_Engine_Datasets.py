@@ -5,9 +5,6 @@ import geemap.foliumap as geemap
 
 st.set_page_config(layout="wide")
 
-
-
-
 def nlcd():
 
     # st.header("National Land Cover Database (NLCD)")
